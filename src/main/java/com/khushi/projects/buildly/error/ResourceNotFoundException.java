@@ -9,6 +9,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class ResourceNotFoundException extends RuntimeException{
-    Long resourceId;
+    String resourceId;
     String resourceName;
 }

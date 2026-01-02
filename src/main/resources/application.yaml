@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 5080
 
 spring:
   application:
@@ -20,3 +20,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+
+jwt:
+  secret-key: asnjnufcheruhfe4u74y574yr73jd092wij2idmwsmxd;4ru483ejdsnicu

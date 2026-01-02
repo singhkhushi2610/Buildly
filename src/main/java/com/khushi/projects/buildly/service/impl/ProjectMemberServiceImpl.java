@@ -84,7 +84,7 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     @Override
     public void removeProjectMember(Long projectId, Long memberId, Long userId) {
         Project project = projectRepository.findAccessibleProjectById(projectId, userId).orElseThrow(
-                () -> new ResourceNotFoundException(projectId, "project")
+                () -> new ResourceNotFoundException(projectId.toString(), "project")
         );
 
         ProjectMemberId projectMemberId = new ProjectMemberId(projectId, memberId);

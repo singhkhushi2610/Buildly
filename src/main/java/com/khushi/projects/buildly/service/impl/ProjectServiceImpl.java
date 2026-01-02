@@ -13,6 +13,7 @@ import com.khushi.projects.buildly.mapper.ProjectMapper;
 import com.khushi.projects.buildly.repository.ProjectMemberRepository;
 import com.khushi.projects.buildly.repository.ProjectRepository;
 import com.khushi.projects.buildly.repository.UserRepository;
+import com.khushi.projects.buildly.security.AuthUtil;
 import com.khushi.projects.buildly.service.ProjectService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -33,12 +34,12 @@ public class ProjectServiceImpl implements ProjectService {
     UserRepository userRepository;
     ProjectMapper projectMapper;
     ProjectMemberRepository projectMemberRepository;
+    AuthUtil authUtil;
 
     @Override
-    public ProjectResponse createProject(ProjectRequest request, Long userId) {
-        User owner = userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException(userId, "User")
-        );
+    public ProjectResponse createProject(ProjectRequest request) {
+        Long userId = authUtil.getCurrentUserId();
+        User owner = userRepository.getReferenceById(userId);
         Project project = Project.builder()
                 .name(request.name())
                 .isPublic(false)
@@ -60,21 +61,24 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectSummaryReposne> getUserProjects(Long userId) {
+    public List<ProjectSummaryReposne> getUserProjects() {
+        Long userId = authUtil.getCurrentUserId();
         var projects = projectRepository.findAllAccessibleProjectsByUser(userId);
         return projectMapper.toListOfProjectSummaryResponse(projects);
     }
 
     @Override
-    public ProjectResponse getUserProjectById(Long projectId, Long userId) {
+    public ProjectResponse getUserProjectById(Long projectId) {
+        Long userId = authUtil.getCurrentUserId();
         Project project = projectRepository.findAccessibleProjectById(projectId, userId).orElseThrow(
-                () -> new ResourceNotFoundException(projectId, "Project")
+                () -> new ResourceNotFoundException(projectId.toString(), "Project")
         );
         return projectMapper.toProjectResponse(project);
     }
 
     @Override
-    public ProjectResponse updateProject(Long projectId, ProjectRequest request, Long userId) {
+    public ProjectResponse updateProject(Long projectId, ProjectRequest request) {
+        Long userId = authUtil.getCurrentUserId();
         Project project = projectRepository.findAccessibleProjectById(projectId, userId).orElseThrow();
 
         project.setName(request.name());
@@ -83,7 +87,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void softDelete(Long userId, Long projectId) {
+    public void softDelete(Long projectId) {
+        Long userId = authUtil.getCurrentUserId();
         Project project = projectRepository.findAccessibleProjectById(projectId, userId).orElseThrow();
 
         project.setDeletedAt(Instant.now());
