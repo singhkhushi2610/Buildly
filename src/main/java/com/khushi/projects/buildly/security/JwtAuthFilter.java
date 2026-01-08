@@ -29,19 +29,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         log.info("Incoming request: {}", request.getRequestURI());
-
         final String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-
         final String token = authHeader.split("Bearer ")[1]; // safer than split
         JwtUserPrincipal user = authUtil.verifyAccessToken(token);
 
         if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             user,
@@ -52,10 +49,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             authentication.setDetails(
                     new WebAuthenticationDetailsSource().buildDetails(request)
             );
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
         filterChain.doFilter(request, response);
     }
 }
