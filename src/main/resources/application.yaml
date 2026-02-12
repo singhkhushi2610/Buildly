@@ -30,14 +30,8 @@ stripe:
     secret-key: ${STRIPE_WEBHOOK_SECRET}
 
 client:
-  url: http://localhost:5080
-
+  url: https://localhost:5080
+  
 app:
   limits:
     free-tier-projects-allowed: 1
-
-logging:
-  level:
-    com.khushi.projects.buildly: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
