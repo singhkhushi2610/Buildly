@@ -7,10 +7,8 @@ import com.khushi.projects.buildly.enums.SubscriptionStatus;
 import java.time.Instant;
 
 public record SubscriptionResponse(
-        Long id,
-        User user,
-        SubscriptionStatus status,
-        Plan plan,
+        String status,
+        PlanResponse plan,
         Long tokensUsedThisCycle,
         Instant currentPeriodStart,
         Instant currentPeriodEnd

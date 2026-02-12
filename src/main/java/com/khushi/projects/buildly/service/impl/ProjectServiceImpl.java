@@ -8,6 +8,7 @@ import com.khushi.projects.buildly.entity.ProjectMember;
 import com.khushi.projects.buildly.entity.ProjectMemberId;
 import com.khushi.projects.buildly.entity.User;
 import com.khushi.projects.buildly.enums.ProjectRole;
+import com.khushi.projects.buildly.error.BadRequestException;
 import com.khushi.projects.buildly.error.ResourceNotFoundException;
 import com.khushi.projects.buildly.mapper.ProjectMapper;
 import com.khushi.projects.buildly.repository.ProjectMemberRepository;
@@ -15,6 +16,7 @@ import com.khushi.projects.buildly.repository.ProjectRepository;
 import com.khushi.projects.buildly.repository.UserRepository;
 import com.khushi.projects.buildly.security.AuthUtil;
 import com.khushi.projects.buildly.service.ProjectService;
+import com.khushi.projects.buildly.service.SubscriptionService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +38,15 @@ public class ProjectServiceImpl implements ProjectService {
     ProjectMapper projectMapper;
     ProjectMemberRepository projectMemberRepository;
     AuthUtil authUtil;
+    SubscriptionService subscriptionService;
 
     @Override
     public ProjectResponse createProject(ProjectRequest request) {
+
+        if(!subscriptionService.canCreateNewProject()) {
+            throw new BadRequestException("User cannot create a new project, upgrade existing plan!");
+        }
+
         Long userId = authUtil.getCurrentUserId();
         User owner = userRepository.getReferenceById(userId);
         Project project = Project.builder()
