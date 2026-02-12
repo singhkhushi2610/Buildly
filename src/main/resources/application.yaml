@@ -26,8 +26,12 @@ jwt:
 stripe:
   api:
     secret-key: ${STRIPE_SECRET_KEY}
-  webhhook:
+  webhook:
     secret-key: ${STRIPE_WEBHOOK_SECRET}
 
 client:
   url: https://localhost:5080
+  
+app:
+  limits:
+    free-tier-projects-allowed: 1
